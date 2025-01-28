@@ -2,21 +2,20 @@
 include "connection.php";
 
 if(isset($_GET["id"])) {
-    $courseId = $_GET["id"];
-    $courseId = htmlspecialchars($courseId);
+    $certId = $_GET["id"];
+    $certId = htmlspecialchars($certId);
 
-    $sql = "SELECT users.email, users.firstname, users.lastname, users.level_type, users.level, courses.title, course_progress.created_at, course_progress.progress FROM course_progress 
-        JOIN users ON course_progress.user_id = users.id 
-        JOIN courses ON course_progress.course_id = courses.id 
-        WHERE course_progress.course_id = $courseId AND course_progress.progress = 100 
-        ORDER BY course_progress.created_at ASC";
+
+    $sql = "SELECT users.email, users.firstname, users.lastname, users.level_type, users.level, user_certificates.created_at FROM user_certificates 
+        JOIN users ON user_certificates.user_id = users.id 
+        WHERE user_certificates.certificate_id = $certId 
+        ORDER BY user_certificates.created_at ASC";
 
     $result = $conn->query($sql);
     
     if($result->num_rows > 0) {
-
+    
     while($row = $result->fetch_assoc()) {
-        
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=data.csv');
 
@@ -34,6 +33,7 @@ if(isset($_GET["id"])) {
 
         fclose($output);
     }
+        echo "<table>";
     } else {
         echo "<br>No results found.";
     }
